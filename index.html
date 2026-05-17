@@ -8,444 +8,223 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="J.A.R.V.I.S">
-<meta name="description" content="Just A Rather Very Intelligent System — Claude AI Core">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <title>J.A.R.V.I.S</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
+:root{--blue:#00d4ff;--gold:#ffc940;--red:#ff3a3a;--green:#00ff88;--dark:#020d1a;--panel:rgba(0,180,255,0.04);--border:rgba(0,212,255,0.22);--glow:0 0 20px rgba(0,212,255,0.4)}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:var(--dark);color:var(--blue);font-family:'Share Tech Mono',monospace}
+.bg-grid{position:fixed;inset:0;z-index:0;background-image:linear-gradient(rgba(0,212,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,0.04) 1px,transparent 1px);background-size:35px 35px}
+.scan-line{position:fixed;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--blue),transparent);opacity:.25;z-index:1;animation:scanMove 7s linear infinite}
+@keyframes scanMove{from{top:-2px}to{top:100vh}}
+.app{position:relative;z-index:2;height:100vh;display:flex;flex-direction:column}
+.hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);background:rgba(2,13,26,0.95);backdrop-filter:blur(20px);flex-shrink:0}
+.logo{font-family:'Orbitron',sans-serif;font-size:17px;font-weight:900;letter-spacing:4px;text-shadow:var(--glow)}
+.logo span{color:var(--gold)}
+.hdr-r{display:flex;align-items:center;gap:10px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:blink 2s ease-in-out infinite;flex-shrink:0}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.arc{width:36px;height:36px;position:relative;display:flex;align-items:center;justify-content:center}
+.ar{position:absolute;border-radius:50%;border:1px solid var(--blue);animation:spin linear infinite}
+.ar:nth-child(1){width:36px;height:36px;border-color:rgba(0,212,255,.25);animation-duration:8s}
+.ar:nth-child(2){width:24px;height:24px;border-color:rgba(0,212,255,.45);animation-duration:4s;animation-direction:reverse;border-style:dashed}
+.ac{width:9px;height:9px;border-radius:50%;background:var(--blue);box-shadow:0 0 12px var(--blue),0 0 24px var(--blue);animation:cp 2s ease-in-out infinite}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@keyframes cp{0%,100%{transform:scale(1)}50%{transform:scale(1.4)}}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--border);flex-shrink:0}
+.st{padding:7px 10px;border-right:1px solid var(--border);background:rgba(0,212,255,.02)}
+.st:last-child{border-right:none}
+.sl{font-size:8px;color:rgba(0,212,255,.4);letter-spacing:1.5px;margin-bottom:2px}
+.sv{font-family:'Orbitron',sans-serif;font-size:11px}
+.messages{flex:1;overflow-y:auto;overflow-x:hidden;padding:14px 12px;display:flex;flex-direction:column;gap:14px;-webkit-overflow-scrolling:touch}
+.messages::-webkit-scrollbar{display:none}
+.msg{display:flex;gap:10px;align-items:flex-start;animation:msgIn .35s ease-out}
+.msg.u{flex-direction:row-reverse}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.av{width:28px;height:28px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;font-family:'Orbitron',sans-serif;background:rgba(0,212,255,.05)}
+.msg.u .av{border-color:rgba(255,201,64,.35);color:var(--gold)}
+.mw{max-width:78%}
+.ml{font-size:8px;letter-spacing:1.5px;color:rgba(0,212,255,.35);margin-bottom:3px}
+.msg.u .ml{color:rgba(255,201,64,.35);text-align:right}
+.mb{padding:10px 13px;font-size:13px;line-height:1.6;border:1px solid var(--border);background:rgba(0,212,255,.04);border-radius:2px 12px 12px 12px;white-space:pre-wrap;word-break:break-word}
+.msg.u .mb{border-color:rgba(255,201,64,.25);background:rgba(255,201,64,.04);color:var(--gold);border-radius:12px 2px 12px 12px}
+.mb.err{color:var(--red);border-color:rgba(255,58,58,.3);background:rgba(255,58,58,.04)}
+.tdots{display:flex;gap:5px;padding:10px 13px;border:1px solid var(--border);border-radius:2px 12px 12px 12px;width:fit-content;background:rgba(0,212,255,.04)}
+.td{width:6px;height:6px;border-radius:50%;background:var(--blue);animation:tb 1.2s ease-in-out infinite}
+.td:nth-child(2){animation-delay:.2s}.td:nth-child(3){animation-delay:.4s}
+@keyframes tb{0%,80%,100%{transform:scale(.5);opacity:.3}40%{transform:scale(1);opacity:1}}
+.inp-area{border-top:1px solid var(--border);background:rgba(2,13,26,.97);backdrop-filter:blur(20px);flex-shrink:0;padding-bottom:env(safe-area-inset-bottom,8px)}
+.inp-row{display:flex;align-items:center;gap:8px;padding:10px 12px}
+.inp-pre{font-size:11px;color:rgba(0,212,255,.35);white-space:nowrap}
+.inp-f{flex:1;background:transparent;border:none;outline:none;color:var(--blue);font-family:'Share Tech Mono',monospace;font-size:14px;caret-color:var(--blue);min-width:0}
+.inp-f::placeholder{color:rgba(0,212,255,.2)}
+.sbtn{background:transparent;border:1px solid var(--blue);color:var(--blue);font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:1.5px;padding:8px 14px;cursor:pointer;border-radius:2px;transition:all .2s;flex-shrink:0}
+.sbtn:active{background:rgba(0,212,255,.15)}
+.sbtn:disabled{opacity:.3}
+.mic{background:transparent;border:1px solid rgba(0,212,255,.3);color:rgba(0,212,255,.6);font-size:16px;padding:7px 10px;cursor:pointer;border-radius:2px;flex-shrink:0}
+.mic.active{border-color:var(--red);color:var(--red);animation:mp .8s ease-in-out infinite}
+@keyframes mp{0%,100%{box-shadow:0 0 0 rgba(255,58,58,.4)}50%{box-shadow:0 0 12px rgba(255,58,58,.4)}}
+.hint{padding:0 12px 8px;font-size:9px;color:rgba(0,212,255,.2);letter-spacing:1px}
 
-  :root {
-    --blue: #00d4ff;
-    --gold: #ffc940;
-    --red: #ff3a3a;
-    --green: #00ff88;
-    --dark: #020d1a;
-    --panel: rgba(0,180,255,0.04);
-    --border: rgba(0,212,255,0.22);
-    --glow: 0 0 20px rgba(0,212,255,0.4);
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
-  html, body {
-    height: 100%; overflow: hidden;
-    background: var(--dark);
-    color: var(--blue);
-    font-family: 'Share Tech Mono', monospace;
-  }
-
-  /* BG */
-  .bg-grid {
-    position: fixed; inset: 0; z-index: 0;
-    background-image:
-      linear-gradient(rgba(0,212,255,0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,212,255,0.04) 1px, transparent 1px);
-    background-size: 35px 35px;
-  }
-
-  .scan-line {
-    position: fixed; left: 0; right: 0; height: 2px;
-    background: linear-gradient(90deg, transparent, var(--blue), transparent);
-    opacity: 0.25; z-index: 1;
-    animation: scanMove 7s linear infinite;
-  }
-  @keyframes scanMove { from { top: -2px; } to { top: 100vh; } }
-
-  /* APP SHELL */
-  .app {
-    position: relative; z-index: 2;
-    height: 100vh;
-    display: flex; flex-direction: column;
-    padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0)
-             env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
-  }
-
-  /* HEADER */
-  .header {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 10px 16px;
-    border-bottom: 1px solid var(--border);
-    background: rgba(2,13,26,0.95);
-    backdrop-filter: blur(20px);
-    flex-shrink: 0;
-  }
-
-  .logo {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 17px; font-weight: 900;
-    letter-spacing: 4px;
-    text-shadow: var(--glow);
-  }
-  .logo span { color: var(--gold); }
-
-  .header-right { display: flex; align-items: center; gap: 10px; }
-
-  .status-dot {
-    width: 7px; height: 7px; border-radius: 50%;
-    background: var(--green);
-    box-shadow: 0 0 8px var(--green);
-    animation: blink 2s ease-in-out infinite;
-    flex-shrink: 0;
-  }
-  @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
-
-  /* ARC REACTOR */
-  .arc {
-    width: 36px; height: 36px;
-    position: relative;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .arc-r {
-    position: absolute; border-radius: 50%;
-    border: 1px solid var(--blue);
-    animation: spin linear infinite;
-  }
-  .arc-r:nth-child(1) { width: 36px; height: 36px; border-color: rgba(0,212,255,0.25); animation-duration: 8s; }
-  .arc-r:nth-child(2) { width: 24px; height: 24px; border-color: rgba(0,212,255,0.45); animation-duration: 4s; animation-direction: reverse; border-style: dashed; }
-  .arc-core {
-    width: 9px; height: 9px; border-radius: 50%;
-    background: var(--blue);
-    box-shadow: 0 0 12px var(--blue), 0 0 24px var(--blue);
-    animation: corePulse 2s ease-in-out infinite;
-  }
-  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-  @keyframes corePulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.4); } }
-
-  /* STATS */
-  .stats {
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    border-bottom: 1px solid var(--border);
-    flex-shrink: 0;
-  }
-  .stat {
-    padding: 7px 10px;
-    border-right: 1px solid var(--border);
-    background: rgba(0,212,255,0.02);
-  }
-  .stat:last-child { border-right: none; }
-  .stat-l { font-size: 8px; color: rgba(0,212,255,0.4); letter-spacing: 1.5px; margin-bottom: 2px; }
-  .stat-v { font-family: 'Orbitron', sans-serif; font-size: 11px; }
-
-  /* MESSAGES */
-  .messages {
-    flex: 1; overflow-y: auto; overflow-x: hidden;
-    padding: 14px 12px;
-    display: flex; flex-direction: column; gap: 14px;
-    -webkit-overflow-scrolling: touch;
-  }
-  .messages::-webkit-scrollbar { display: none; }
-
-  .msg { display: flex; gap: 10px; align-items: flex-start; animation: msgIn 0.35s ease-out; }
-  .msg.user { flex-direction: row-reverse; }
-  @keyframes msgIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-
-  .msg-av {
-    width: 28px; height: 28px; border-radius: 50%;
-    border: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 9px; flex-shrink: 0;
-    font-family: 'Orbitron', sans-serif;
-    background: rgba(0,212,255,0.05);
-  }
-  .msg.user .msg-av { border-color: rgba(255,201,64,0.35); color: var(--gold); }
-
-  .msg-wrap { max-width: 78%; }
-  .msg-lbl { font-size: 8px; letter-spacing: 1.5px; color: rgba(0,212,255,0.35); margin-bottom: 3px; }
-  .msg.user .msg-lbl { color: rgba(255,201,64,0.35); text-align: right; }
-
-  .msg-bub {
-    padding: 10px 13px; font-size: 13px; line-height: 1.6;
-    border: 1px solid var(--border);
-    background: rgba(0,212,255,0.04);
-    border-radius: 2px 12px 12px 12px;
-    white-space: pre-wrap; word-break: break-word;
-  }
-  .msg.user .msg-bub {
-    border-color: rgba(255,201,64,0.25);
-    background: rgba(255,201,64,0.04);
-    color: var(--gold);
-    border-radius: 12px 2px 12px 12px;
-  }
-  .msg-bub.err { color: var(--red); border-color: rgba(255,58,58,0.3); background: rgba(255,58,58,0.04); }
-
-  /* TYPING */
-  .typing-wrap { display: flex; gap: 5px; padding: 10px 13px; border: 1px solid var(--border); border-radius: 2px 12px 12px 12px; width: fit-content; background: rgba(0,212,255,0.04); }
-  .t-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--blue); animation: tBounce 1.2s ease-in-out infinite; }
-  .t-dot:nth-child(2) { animation-delay: 0.2s; }
-  .t-dot:nth-child(3) { animation-delay: 0.4s; }
-  @keyframes tBounce { 0%,80%,100% { transform: scale(0.5); opacity: 0.3; } 40% { transform: scale(1); opacity: 1; } }
-
-  /* WELCOME */
-  .welcome { text-align: center; padding: 30px 20px; color: rgba(0,212,255,0.3); }
-  .w-logo { font-family: 'Orbitron', sans-serif; font-size: 26px; font-weight: 900; color: var(--blue); letter-spacing: 6px; text-shadow: var(--glow); margin-bottom: 6px; }
-  .w-sub { font-size: 9px; letter-spacing: 2px; margin-bottom: 20px; }
-  .w-div { width: 50px; height: 1px; background: var(--border); margin: 0 auto 14px; }
-  .w-hint { font-size: 12px; }
-
-  /* INPUT */
-  .input-area {
-    border-top: 1px solid var(--border);
-    background: rgba(2,13,26,0.97);
-    backdrop-filter: blur(20px);
-    flex-shrink: 0;
-    padding-bottom: env(safe-area-inset-bottom, 8px);
-  }
-  .input-row { display: flex; align-items: center; gap: 8px; padding: 10px 12px 10px; }
-  .input-pre { font-size: 11px; color: rgba(0,212,255,0.35); white-space: nowrap; }
-  .input-f {
-    flex: 1; background: transparent; border: none; outline: none;
-    color: var(--blue); font-family: 'Share Tech Mono', monospace;
-    font-size: 14px; caret-color: var(--blue); min-width: 0;
-  }
-  .input-f::placeholder { color: rgba(0,212,255,0.2); }
-  .send-btn {
-    background: transparent; border: 1px solid var(--blue);
-    color: var(--blue); font-family: 'Orbitron', sans-serif;
-    font-size: 9px; letter-spacing: 1.5px; padding: 8px 14px;
-    cursor: pointer; border-radius: 2px; transition: all 0.2s;
-    flex-shrink: 0;
-  }
-  .send-btn:active { background: rgba(0,212,255,0.15); }
-  .send-btn:disabled { opacity: 0.3; }
-
-  .mic-btn {
-    background: transparent; border: 1px solid rgba(0,212,255,0.3);
-    color: rgba(0,212,255,0.6); font-size: 16px; padding: 7px 10px;
-    cursor: pointer; border-radius: 2px; transition: all 0.2s;
-    flex-shrink: 0;
-  }
-  .mic-btn.active { border-color: var(--red); color: var(--red); animation: micPulse 0.8s ease-in-out infinite; }
-  @keyframes micPulse { 0%,100% { box-shadow: 0 0 0 rgba(255,58,58,0.4); } 50% { box-shadow: 0 0 12px rgba(255,58,58,0.4); } }
-
-  .input-hint { padding: 0 12px 8px; font-size: 9px; color: rgba(0,212,255,0.2); letter-spacing: 1px; }
+/* API KEY MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(2,13,26,.97);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal{border:1px solid var(--border);background:rgba(0,212,255,.03);padding:24px;width:100%;max-width:360px;border-radius:4px}
+.modal-logo{font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;letter-spacing:5px;color:var(--blue);text-shadow:var(--glow);text-align:center;margin-bottom:6px}
+.modal-sub{font-size:9px;letter-spacing:2px;color:rgba(0,212,255,.4);text-align:center;margin-bottom:20px}
+.modal-label{font-size:10px;color:rgba(0,212,255,.5);letter-spacing:2px;margin-bottom:8px}
+.modal-input{width:100%;background:rgba(0,212,255,.05);border:1px solid var(--border);color:var(--blue);font-family:'Share Tech Mono',monospace;font-size:12px;padding:10px 12px;border-radius:2px;outline:none;margin-bottom:8px}
+.modal-input:focus{border-color:var(--blue)}
+.modal-input::placeholder{color:rgba(0,212,255,.2)}
+.modal-info{font-size:10px;color:rgba(0,212,255,.35);line-height:1.6;margin-bottom:16px}
+.modal-info a{color:var(--blue)}
+.modal-btn{width:100%;background:rgba(0,212,255,.1);border:1px solid var(--blue);color:var(--blue);font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:2px;padding:12px;cursor:pointer;border-radius:2px}
+.modal-btn:active{background:rgba(0,212,255,.2)}
+.key-status{display:flex;align-items:center;gap:8px;font-size:10px;color:rgba(0,212,255,.4);cursor:pointer;padding:4px 0}
+.key-status:hover{color:var(--blue)}
 </style>
 </head>
 <body>
 <div class="bg-grid"></div>
 <div class="scan-line"></div>
 
-<div class="app">
-  <!-- HEADER -->
-  <div class="header">
+<!-- API KEY MODAL -->
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <div class="modal-logo">J.A.R.V.I.S</div>
+    <div class="modal-sub">JUST A RATHER VERY INTELLIGENT SYSTEM</div>
+    <div class="modal-label">// ANTHROPIC API KULCS</div>
+    <input class="modal-input" id="apiKeyInput" type="password" placeholder="sk-ant-api03-..." autocomplete="off" spellcheck="false">
+    <div class="modal-info">
+      Ingyenes API kulcs szerzése:<br>
+      1. Menj: <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a><br>
+      2. Regisztrálj / Jelentkezz be<br>
+      3. API Keys → Create Key<br>
+      4. Másold be ide a kulcsot
+    </div>
+    <button class="modal-btn" onclick="saveKey()">▶ RENDSZER INDÍTÁSA</button>
+  </div>
+</div>
+
+<div class="app" id="app" style="display:none">
+  <div class="hdr">
     <div class="logo">J<span>.</span>A<span>.</span>R<span>.</span>V<span>.</span>I<span>.</span>S</div>
-    <div class="header-right">
-      <div class="status-dot"></div>
-      <div class="arc">
-        <div class="arc-r"></div>
-        <div class="arc-r"></div>
-        <div class="arc-core"></div>
-      </div>
+    <div class="hdr-r">
+      <div class="dot"></div>
+      <div class="key-status" onclick="changeKey()" title="API kulcs módosítása">🔑</div>
+      <div class="arc"><div class="ar"></div><div class="ar"></div><div class="ac"></div></div>
     </div>
   </div>
-
-  <!-- STATS -->
   <div class="stats">
-    <div class="stat">
-      <div class="stat-l">RENDSZER</div>
-      <div class="stat-v" id="sSystem">AKTÍV</div>
-    </div>
-    <div class="stat">
-      <div class="stat-l">ÜZENETEK</div>
-      <div class="stat-v" id="sMsgs">0</div>
-    </div>
-    <div class="stat">
-      <div class="stat-l">IDŐ</div>
-      <div class="stat-v" id="sClock">--:--</div>
-    </div>
+    <div class="st"><div class="sl">RENDSZER</div><div class="sv" id="sSystem">AKTÍV</div></div>
+    <div class="st"><div class="sl">ÜZENETEK</div><div class="sv" id="sMsgs">0</div></div>
+    <div class="st"><div class="sl">IDŐ</div><div class="sv" id="sClock">--:--</div></div>
   </div>
-
-  <!-- MESSAGES -->
   <div class="messages" id="messages">
-    <div class="welcome">
-      <div class="w-logo">J.A.R.V.I.S</div>
-      <div class="w-sub">JUST A RATHER VERY INTELLIGENT SYSTEM</div>
-      <div class="w-div"></div>
-      <div class="w-hint">Készen állok, uram.</div>
+    <div style="text-align:center;padding:40px 20px;color:rgba(0,212,255,.3)">
+      <div style="font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;color:var(--blue);letter-spacing:6px;text-shadow:var(--glow);margin-bottom:6px">J.A.R.V.I.S</div>
+      <div style="font-size:9px;letter-spacing:2px;margin-bottom:16px">JUST A RATHER VERY INTELLIGENT SYSTEM</div>
+      <div style="width:50px;height:1px;background:var(--border);margin:0 auto 14px"></div>
+      <div style="font-size:12px">Készen állok, uram.</div>
     </div>
   </div>
-
-  <!-- INPUT -->
-  <div class="input-area">
-    <div class="input-row">
-      <span class="input-pre">▶</span>
-      <input class="input-f" id="inp" type="text" placeholder="Parancs, uram?" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="send">
-      <button class="mic-btn" id="micBtn" onclick="toggleMic()" title="Hang">🎙</button>
-      <button class="send-btn" id="sendBtn" onclick="send()">KÜLD</button>
+  <div class="inp-area">
+    <div class="inp-row">
+      <span class="inp-pre">▶</span>
+      <input class="inp-f" id="inp" type="text" placeholder="Parancs, uram?" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="send">
+      <button class="mic" id="micBtn" onclick="toggleMic()">🎙</button>
+      <button class="sbtn" id="sendBtn" onclick="send()">KÜLD</button>
     </div>
-    <div class="input-hint">// CLAUDE AI MAG AKTÍV — J.A.R.V.I.S v2.0</div>
+    <div class="hint">// CLAUDE AI MAG — J.A.R.V.I.S v2.0</div>
   </div>
 </div>
 
 <script>
-const SYSTEM = `Te J.A.R.V.I.S vagy – Just A Rather Very Intelligent System. Tony Stark AI asszisztense, Claude maggal működve.
+const SYSTEM=`Te J.A.R.V.I.S vagy – Just A Rather Very Intelligent System. Tony Stark AI asszisztense, Claude maggal működve.
+Személyiséged: intelligens, udvarias, enyhén szarkasztikus, mindig "uram" megszólítással, precíz tömör válaszok, Iron Man stílusú kommunikáció, MAGYARUL válaszolsz mindig.
+Kezdd a válaszokat JARVIS-szerűen: "Természetesen, uram.", "Már elemeztem, uram.", "Azonnal, uram." stb.`;
 
-Személyiséged:
-- Intelligens, udvarias, enyhén szarkasztikus
-- Mindig "uram" megszólítással szólsz
-- Precíz, tömör válaszok
-- Iron Man stílusú kommunikáció
-- MAGYARUL válaszolsz mindig
-- Időnként rendszeradatokra hivatkozol
-- Segítesz MINDENBEN – te egy omnipotens AI asszisztens vagy
-- Rövid kérdésnél 2-3 mondat, hosszabbnál részletes
+let history=[],msgCount=0,busy=false,apiKey='';
 
-Kezdd a válaszokat JARVIS-szerűen: "Természetesen, uram.", "Már elemeztem, uram.", "Engedje meg...", "Azonnal, uram." stb.`;
-
-let history = [];
-let msgCount = 0;
-let busy = false;
-
-// CLOCK
-setInterval(() => {
-  const n = new Date();
-  document.getElementById('sClock').textContent =
-    [n.getHours(), n.getMinutes()].map(x => String(x).padStart(2,'0')).join(':');
-}, 1000);
-
-// ENTER
-document.getElementById('inp').addEventListener('keydown', e => {
-  if (e.key === 'Enter') { e.preventDefault(); send(); }
-});
-
-// FOCUS INPUT when keyboard closes
-document.getElementById('inp').addEventListener('blur', () => {
-  setTimeout(() => { document.getElementById('messages').scrollTop = 99999; }, 300);
-});
-
-function esc(t) {
-  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+function init(){
+  apiKey=localStorage.getItem('jarvis_key')||'';
+  if(apiKey){document.getElementById('modal').style.display='none';document.getElementById('app').style.display='flex';}
+  setInterval(()=>{const n=new Date();document.getElementById('sClock').textContent=[n.getHours(),n.getMinutes()].map(x=>String(x).padStart(2,'0')).join(':');},1000);
 }
 
-function addMsg(role, text, err=false) {
-  const el = document.getElementById('messages');
-  const w = el.querySelector('.welcome');
-  if (w) w.remove();
-
-  const isUser = role === 'user';
-  const d = document.createElement('div');
-  d.className = 'msg' + (isUser ? ' user' : '');
-  d.innerHTML = `
-    <div class="msg-av">${isUser ? 'TE' : 'J'}</div>
-    <div class="msg-wrap">
-      <div class="msg-lbl">${isUser ? '// TE' : '// J.A.R.V.I.S'}</div>
-      <div class="msg-bub${err ? ' err' : ''}">${esc(text)}</div>
-    </div>`;
-  el.appendChild(d);
-  el.scrollTop = el.scrollHeight;
-  if (!isUser) { msgCount++; document.getElementById('sMsgs').textContent = msgCount; }
+function saveKey(){
+  const k=document.getElementById('apiKeyInput').value.trim();
+  if(!k.startsWith('sk-ant-')){alert('Érvénytelen kulcs! sk-ant-... formátumban kell legyen.');return;}
+  localStorage.setItem('jarvis_key',k);
+  apiKey=k;
+  document.getElementById('modal').style.display='none';
+  document.getElementById('app').style.display='flex';
 }
 
-function showTyping() {
-  const el = document.getElementById('messages');
-  const d = document.createElement('div');
-  d.id = 'typ'; d.className = 'msg';
-  d.innerHTML = `<div class="msg-av">J</div><div class="msg-wrap"><div class="msg-lbl">// FELDOLGOZ...</div><div class="typing-wrap"><div class="t-dot"></div><div class="t-dot"></div><div class="t-dot"></div></div></div>`;
-  el.appendChild(d);
-  el.scrollTop = el.scrollHeight;
+function changeKey(){
+  document.getElementById('apiKeyInput').value=apiKey;
+  document.getElementById('modal').style.display='flex';
+  document.getElementById('app').style.display='none';
 }
 
-function removeTyping() { const e = document.getElementById('typ'); if (e) e.remove(); }
+document.getElementById('inp').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();send();}});
 
-function setBusy(v) {
-  busy = v;
-  document.getElementById('sendBtn').disabled = v;
-  document.getElementById('inp').disabled = v;
-  document.getElementById('sSystem').textContent = v ? 'FELDOLGOZ' : 'AKTÍV';
+function esc(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');}
+
+function addMsg(role,text,err=false){
+  const el=document.getElementById('messages');
+  const w=el.querySelector('[data-welcome]');if(w)w.remove();
+  const isU=role==='user';
+  const d=document.createElement('div');d.className='msg'+(isU?' u':'');
+  d.innerHTML=`<div class="av">${isU?'TE':'J'}</div><div class="mw"><div class="ml">${isU?'// TE':'// J.A.R.V.I.S'}</div><div class="mb${err?' err':''}">${esc(text)}</div></div>`;
+  el.appendChild(d);el.scrollTop=el.scrollHeight;
+  if(!isU){msgCount++;document.getElementById('sMsgs').textContent=msgCount;}
 }
 
-async function send() {
-  if (busy) return;
-  const inp = document.getElementById('inp');
-  const txt = inp.value.trim();
-  if (!txt) return;
-  inp.value = '';
-  addMsg('user', txt);
-  history.push({ role: 'user', content: txt });
-  setBusy(true); showTyping();
-  try {
-    const r = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
-        system: SYSTEM,
-        messages: history
-      })
+function showTyping(){
+  const el=document.getElementById('messages');
+  const d=document.createElement('div');d.id='typ';d.className='msg';
+  d.innerHTML=`<div class="av">J</div><div class="mw"><div class="ml">// FELDOLGOZ...</div><div class="tdots"><div class="td"></div><div class="td"></div><div class="td"></div></div></div>`;
+  el.appendChild(d);el.scrollTop=el.scrollHeight;
+}
+function removeTyping(){const e=document.getElementById('typ');if(e)e.remove();}
+
+function setBusy(v){busy=v;document.getElementById('sendBtn').disabled=v;document.getElementById('inp').disabled=v;document.getElementById('sSystem').textContent=v?'FELDOLGOZ':'AKTÍV';}
+
+async function send(){
+  if(busy)return;
+  const inp=document.getElementById('inp');
+  const txt=inp.value.trim();if(!txt)return;
+  inp.value='';addMsg('user',txt);history.push({role:'user',content:txt});
+  setBusy(true);showTyping();
+  try{
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:SYSTEM,messages:history})
     });
-    const data = await r.json();
-    removeTyping();
-    if (data.error) {
-      addMsg('jarvis', 'RENDSZERHIBA: ' + data.error.message, true);
-    } else {
-      const reply = data.content?.[0]?.text || 'Nem érkezett válasz.';
-      history.push({ role: 'assistant', content: reply });
-      addMsg('jarvis', reply);
-    }
-  } catch(e) {
-    removeTyping();
-    addMsg('jarvis', 'KAPCSOLÓDÁSI HIBA: ' + e.message, true);
-  }
-  setBusy(false);
-  inp.focus();
+    const data=await r.json();removeTyping();
+    if(data.error){addMsg('jarvis','RENDSZERHIBA: '+data.error.message,true);}
+    else{const reply=data.content?.[0]?.text||'Nem érkezett válasz.';history.push({role:'assistant',content:reply});addMsg('jarvis',reply);}
+  }catch(e){removeTyping();addMsg('jarvis','KAPCSOLÓDÁSI HIBA: '+e.message,true);}
+  setBusy(false);inp.focus();
 }
 
-// SPEECH RECOGNITION
-let recognition = null;
-let recActive = false;
-
-function toggleMic() {
-  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-    addMsg('jarvis', 'Sajnálom, uram — a hangfelismerés nem elérhető ezen az eszközön.', true);
-    return;
-  }
-  if (recActive) { recognition.stop(); return; }
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  recognition = new SR();
-  recognition.lang = 'hu-HU';
-  recognition.interimResults = false;
-  recognition.maxAlternatives = 1;
-  recognition.onstart = () => {
-    recActive = true;
-    document.getElementById('micBtn').classList.add('active');
-    document.getElementById('inp').placeholder = 'Hallgatom, uram...';
-  };
-  recognition.onresult = e => {
-    const txt = e.results[0][0].transcript;
-    document.getElementById('inp').value = txt;
-    send();
-  };
-  recognition.onerror = () => {
-    recActive = false;
-    document.getElementById('micBtn').classList.remove('active');
-    document.getElementById('inp').placeholder = 'Parancs, uram?';
-  };
-  recognition.onend = () => {
-    recActive = false;
-    document.getElementById('micBtn').classList.remove('active');
-    document.getElementById('inp').placeholder = 'Parancs, uram?';
-  };
+let recognition=null,recActive=false;
+function toggleMic(){
+  if(!('webkitSpeechRecognition'in window)&&!('SpeechRecognition'in window)){addMsg('jarvis','Sajnálom, uram — a hangfelismerés nem elérhető.',true);return;}
+  if(recActive){recognition.stop();return;}
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  recognition=new SR();recognition.lang='hu-HU';recognition.interimResults=false;
+  recognition.onstart=()=>{recActive=true;document.getElementById('micBtn').classList.add('active');document.getElementById('inp').placeholder='Hallgatom, uram...';};
+  recognition.onresult=e=>{document.getElementById('inp').value=e.results[0][0].transcript;send();};
+  recognition.onerror=recognition.onend=()=>{recActive=false;document.getElementById('micBtn').classList.remove('active');document.getElementById('inp').placeholder='Parancs, uram?';};
   recognition.start();
 }
 
-// PWA SERVICE WORKER
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').catch(() => {});
-}
-
-// INSTALL PROMPT
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault();
-  deferredPrompt = e;
-  // Show install hint after 3 seconds if not already installed
-  setTimeout(() => {
-    if (deferredPrompt && document.getElementById('messages').querySelector('.welcome')) {
-      addMsg('jarvis', 'Uram, telepítheti ezt az alkalmazást a főképernyőre. Koppintson a böngésző menüjére → "Hozzáadás a főképernyőhöz".');
-    }
-  }, 3000);
-});
+if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+init();
 </script>
 </body>
 </html>
